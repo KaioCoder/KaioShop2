@@ -179,107 +179,60 @@ button:hover { background: #e85d5d; }
 </form>
 
   </div> <script>
-  if (localStorage.getItem("rememberUser")) {
-    window.location.href = "home.html";
-  }
+    document.getElementById("authForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value;
+  const msg = document.getElementById("message");
 
-  let isLogin = true;
+  if (isLogin) {
+    // LOGIN API
+    const res = await fetch('https://kaioshop2.onrender.com/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-  function toggleForm() {
-    isLogin = !isLogin;
-    document.getElementById("formTitle").textContent = isLogin ? "Welcome to KaioShop" : "Join KaioShop";
-    document.getElementById("submitBtn").textContent = isLogin ? "Login" : "Sign Up";
-    document.getElementById("usernameGroup").style.display = isLogin ? "none" : "block";
-    document.getElementById("rememberGroup").style.display = isLogin ? "flex" : "none";
-    document.querySelector(".toggle-link").textContent = isLogin ?
-      "Don't have an account? Sign up" : "Already have an account? Login";
-    document.getElementById("message").textContent = "";
-  }
+    const data = await res.json();
 
-  function togglePassword() {
-    const passField = document.getElementById("password");
-    passField.type = passField.type === "password" ? "text" : "password";
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle("dark-mode");
-  }
-
-  document.getElementById("password").addEventListener("input", function () {
-    const value = this.value;
-    const bar = document.getElementById("strengthBar");
-    const strength = value.length < 4 ? "red" :
-                     value.length < 8 ? "orange" : "#00B894";
-    bar.style.background = strength;
-  });
-
-  async function callBackend(endpoint, data) {
-    try {
-      const res = await fetch(`https://your-render-api.onrender.com/api/${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      return await res.json();
-    } catch (err) {
-      console.warn("Backend offline, falling back to local logic.");
-      return null;
-    }
-  }
-
-  document.getElementById("authForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const username = document.getElementById("username").value.trim();
-    const msg = document.getElementById("message");
-
-    if (isLogin) {
-      // Try backend first
-      const result = await callBackend("login", { email, password });
-      if (result && result.success) {
-        msg.style.color = "#00B894";
-        msg.textContent = "Login successful! Redirecting...";
-        if (document.getElementById("remember").checked) {
-          localStorage.setItem("rememberUser", email);
-        }
-        setTimeout(() => window.location.href = "home.html", 1500);
-        return;
+    if (res.ok) {
+      msg.style.color = "#00B894";
+      msg.textContent = "Login successful! Redirecting...";
+      if (document.getElementById("remember").checked) {
+        localStorage.setItem("rememberUser", email);
       }
-
-      // Local fallback
-      if (email === "admin@kaioshop.com" && password === "admin123") {
-        msg.style.color = "#00B894";
-        msg.textContent = "Login successful (local)! Redirecting...";
-        if (document.getElementById("remember").checked) {
-          localStorage.setItem("rememberUser", email);
-        }
-        setTimeout(() => window.location.href = "home.html", 1500);
-      } else {
-        msg.style.color = "#FF7675";
-        msg.textContent = "Invalid credentials!";
-      }
+      setTimeout(() => window.location.href = "home.html", 1500);
     } else {
-      if (email && password && username) {
-        const result = await callBackend("signup", { email, password, username });
-        if (result && result.success) {
-          msg.style.color = "#00B894";
-          msg.textContent = "Account created! You can now login.";
-          toggleForm();
-        } else {
-          msg.style.color = "#FF7675";
-          msg.textContent = result?.error || "Signup failed.";
-        }
-      } else {
-        msg.style.color = "#FF7675";
-        msg.textContent = "All fields required!";
-      }
+      msg.style.color = "#FF7675";
+      msg.textContent = data.message || "Login failed!";
     }
-  });
 
-  window.onload = () => {
-    const remembered = localStorage.getItem("rememberUser");
-    if (remembered) document.getElementById("email").value = remembered;
+  } else {
+    // SIGNUP API
+    if (!email || !password || !username) {
+      msg.style.color = "#FF7675";
+      msg.textContent = "All fields required!";
+      return;
+    }
+
+    const res = await fetch('https://kaioshop2.onrender.com/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, username })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      msg.style.color = "#00B894";
+      msg.textContent = "Signup successful! You can now log in.";
+      toggleForm();
+    } else {
+      msg.style.color = "#FF7675";
+      msg.textContent = data.message || "Signup failed!";
+    }
   }
-          </script>  </body>
+}); 
+  </script>  </body>
 </html>
