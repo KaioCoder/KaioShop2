@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KaioShop Dashboard</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #1E1E2F;
+      color: #F5F6FA;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      font-size: 2.5rem;
+    }
+    button {
+      margin-top: 2rem;
+      padding: 0.75rem 1.5rem;
+      background: #FF7675;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello, KaioUser!</h1>
+  <p>You are logged in to KaioShop.</p>
+  <button onclick="logout()">Logout</button>
+
+  <script>
+    if (!localStorage.getItem('rememberUser')) {
+      window.location.href = 'login.html';
+    }
+    function logout() {
+      localStorage.removeItem('rememberUser');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
