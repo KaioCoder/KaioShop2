@@ -1,42 +1,50 @@
-
-// server.js
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 5000;
+const port = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-const users = []; // In-memory storage for demo
+// In-memory user store (mock database)
+const users = [];
 
 // Signup route
-app.post("/signup", (req, res) => {
+app.post('/api/signup', (req, res) => {
   const { email, password, username } = req.body;
-  const userExists = users.find(user => user.email === email);
-
-  if (userExists) {
-    return res.status(400).json({ message: "Email already registered!" });
+  const existingUser = users.find(user => user.email === email);
+  if (existingUser) {
+    return res.status(400).json({ error: 'User already exists' });
   }
-
   users.push({ email, password, username });
-  res.status(200).json({ message: "Signup successful!" });
+  res.status(201).json({ message: 'User registered successfully' });
 });
 
 // Login route
-app.post("/login", (req, res) => {
+app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email && u.password === password);
-
+  const user = users.find(user => user.email === email && user.password === password);
   if (user) {
-    res.status(200).json({ message: "Login successful!" });
+    res.status(200).json({ message: 'Login successful' });
   } else {
-    res.status(401).json({ message: "Invalid email or password." });
+    res.status(401).json({ error: 'Invalid credentials' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Forgot password mock
+app.post('/api/forgot-password', (req, res) => {
+  const { email } = req.body;
+  const user = users.find(u => u.email === email);
+  if (user) {
+    res.json({ message: 'Password reset link sent (mock)' });
+  } else {
+    res.status(404).json({ error: 'User not found' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
