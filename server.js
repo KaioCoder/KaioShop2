@@ -1,35 +1,42 @@
-const express = require('express');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
+
+// server.js
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
-const PORT = 3000;
-const users = []; // Temporary user store
+const PORT = 5000;
 
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
+
+const users = []; // In-memory storage for demo
 
 // Signup route
-app.post('/api/signup', async (req, res) => {
-  const { username, email, password } = req.body;
-  const existing = users.find(u => u.email === email);
-  if (existing) return res.status(400).json({ message: 'User already exists' });
+app.post("/signup", (req, res) => {
+  const { email, password, username } = req.body;
+  const userExists = users.find(user => user.email === email);
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  users.push({ username, email, password: hashedPassword });
-  res.json({ message: 'Signup successful' });
+  if (userExists) {
+    return res.status(400).json({ message: "Email already registered!" });
+  }
+
+  users.push({ email, password, username });
+  res.status(200).json({ message: "Signup successful!" });
 });
 
 // Login route
-app.post('/api/login', async (req, res) => {
+app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(400).json({ message: 'User not found' });
+  const user = users.find(u => u.email === email && u.password === password);
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(400).json({ message: 'Incorrect password' });
-
-  res.json({ message: 'Login successful', username: user.username });
+  if (user) {
+    res.status(200).json({ message: "Login successful!" });
+  } else {
+    res.status(401).json({ message: "Invalid email or password." });
+  }
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
