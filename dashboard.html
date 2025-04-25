@@ -4,76 +4,82 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KaioShop - Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1E1E2F, #6C5CE7);
       color: #fff;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      justify-content: center;
+      height: 100vh;
     }
-
-    .dashboard {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(15px);
+    .card {
+      background: rgba(255, 255, 255, 0.1);
       padding: 2rem;
       border-radius: 20px;
-      max-width: 450px;
-      width: 90%;
-      text-align: center;
       box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      text-align: center;
     }
-
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: #00B894;
+      margin-bottom: 0.5rem;
     }
-
-    p {
+    .info {
       font-size: 1.1rem;
-      margin-bottom: 2rem;
+      margin: 0.3rem 0;
     }
-
     button {
-      padding: 0.75rem 1.5rem;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background: #FF7675;
+      color: white;
       border: none;
       border-radius: 10px;
-      background-color: #FF7675;
-      color: white;
-      font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
     }
-
     button:hover {
-      background-color: #e85d5d;
+      background: #e85d5d;
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <h1>Welcome, <span id="username">User</span>!</h1>
-    <p>You’ve successfully logged in to KaioShop.</p>
+  <div class="card">
+    <h1>Welcome to KaioShop!</h1>
+    <p class="info" id="username">Username: </p>
+    <p class="info" id="email">Email: </p>
     <button onclick="logout()">Logout</button>
   </div>
 
   <script>
-    // Load remembered username if available
-    const remembered = localStorage.getItem("rememberUser");
-    const username = localStorage.getItem("username") || "User";
-    document.getElementById("username").textContent = username;
+    // Decode JWT
+    function parseJwt(token) {
+      try {
+        return JSON.parse(atob(token.split('.')[1]));
+      } catch (e) {
+        return null;
+      }
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    } else {
+      const data = parseJwt(token);
+      if (data?.email && data?.username) {
+        document.getElementById('username').textContent = `Username: ${data.username}`;
+        document.getElementById('email').textContent = `Email: ${data.email}`;
+      } else {
+        alert("Invalid token");
+        localStorage.removeItem("token");
+        window.location.href = "login.html";
+      }
+    }
 
     function logout() {
-      localStorage.removeItem("rememberUser");
-      localStorage.removeItem("username");
-      // redirect to login
-      window.location.href = "login.html";
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
     }
   </script>
 </body>
