@@ -2,65 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>KaioShop Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KaioShop Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      background: #1E1E2F;
-      color: #F5F6FA;
-      font-family: 'Poppins', sans-serif;
+      background-color: #0f111a;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       margin: 0;
-      padding: 1rem;
     }
-    .dashboard {
-      background: rgba(255, 255, 255, 0.08);
+    .card {
+      background-color: #1c1e29;
       padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
       text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
-    h1 {
-      margin-bottom: 1rem;
-      color: #00B894;
+    .error {
+      color: #e74c3c;
+      font-weight: bold;
     }
-    .user-info {
-      font-size: 1.1rem;
+    .user-data {
       margin-top: 1rem;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <h1>Welcome to KaioShop Dashboard</h1>
-    <div class="user-info">
-      <p><strong>Username:</strong> <span id="username">Loading...</span></p>
-      <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+  <div class="card">
+    <h2>Welcome to KaioShop Dashboard</h2>
+    <p id="message"></p>
+    <div class="user-data" id="userData" style="display: none;">
+      <p><strong>Username:</strong> <span id="username"></span></p>
+      <p><strong>Email:</strong> <span id="email"></span></p>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
   <script>
-    function parseJwt(token) {
-      try {
-        return JSON.parse(atob(token.split('.')[1]));
-      } catch (e) {
-        return null;
-      }
-    }
+    const token = localStorage.getItem('jwt');
+    const messageBox = document.getElementById('message');
+    const userData = document.getElementById('userData');
 
-    const token = localStorage.getItem("jwt");
-    const user = token ? parseJwt(token) : null;
-
-    if (user) {
-      document.getElementById("username").textContent = user.username;
-      document.getElementById("email").textContent = user.email;
+    if (!token) {
+      messageBox.textContent = 'Not logged in. Please login again.';
+      messageBox.className = 'error';
     } else {
-      document.querySelector(".dashboard").innerHTML =
-        '<p style="color: #FF7675;">Not logged in. Please login again.</p>';
+      try {
+        const decoded = jwt_decode(token);
+        document.getElementById('username').textContent = decoded.username || 'N/A';
+        document.getElementById('email').textContent = decoded.email || 'N/A';
+        userData.style.display = 'block';
+      } catch (e) {
+        messageBox.textContent = 'Invalid token. Please login again.';
+        messageBox.className = 'error';
+      }
     }
   </script>
 </body>
