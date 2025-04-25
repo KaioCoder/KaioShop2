@@ -1,9 +1,10 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KaioShop - Login</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * { box-sizing: border-box; }
     body {
@@ -14,7 +15,6 @@
       align-items: center;
       min-height: 100vh;
       background: linear-gradient(135deg, #1E1E2F, #6C5CE7);
-      transition: background 0.5s ease;
     }
     .dark-mode { background: linear-gradient(135deg, #0f0f1f, #2e2e3e); }
     .container {
@@ -29,23 +29,20 @@
       animation: fadeIn 1s forwards;
       position: relative;
     }
-    .logo {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    .logo img {
-      width: 120px;
-    }
+
+    .logo { display: flex; justify-content: center; margin-bottom: 1.5rem; }
+    .logo img { width: 120px; }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    h2 { text-align: center; margin-bottom: 1.5rem; color: #FF7675; transition: all 0.3s ease; }
+
+    h2 { text-align: center; margin-bottom: 1.5rem; color: #FF7675; }
+
     .input-group {
       position: relative;
       margin-bottom: 1.2rem;
-      transition: all 0.3s ease;
     }
     .input-group input {
       width: 100%;
@@ -55,30 +52,27 @@
       background: rgba(255,255,255,0.15);
       color: #F5F6FA;
     }
-    .input-group input::placeholder { color: #ccc; }
     .input-group i {
       position: absolute;
       left: 10px;
       top: 50%;
       transform: translateY(-50%);
-      color: #fff;
     }
-    .input-group .toggle-password {
-      right: 10px;
-      left: auto;
-      cursor: pointer;
-    }
+    .toggle-password { right: 10px; left: auto; cursor: pointer; }
+
     .password-strength {
       height: 6px;
       border-radius: 4px;
       margin-top: 4px;
       background: gray;
     }
+
     .checkbox-group {
       display: flex;
       align-items: center;
       font-size: 0.9rem;
     }
+
     button {
       width: 100%;
       padding: 0.75rem;
@@ -89,19 +83,20 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 1rem;
-      transition: background 0.3s;
     }
-    button:hover { background: #e85d5d; }
+
     .social-login {
       display: flex;
       justify-content: space-between;
       margin-top: 1rem;
     }
+
     .social-login button {
       width: 48%;
       background: #fff;
       color: #333;
     }
+
     .toggle-link, .forgot-password {
       text-align: center;
       margin-top: 1rem;
@@ -109,12 +104,10 @@
       color: #ccc;
       font-size: 0.9rem;
       text-decoration: underline;
-      transition: all 0.3s ease;
     }
-    .message {
-      margin-top: 1rem;
-      text-align: center;
-    }
+
+    .message { margin-top: 1rem; text-align: center; }
+
     .toggle-mode {
       position: absolute;
       top: 15px;
@@ -126,6 +119,7 @@
       border-radius: 10px;
       cursor: pointer;
     }
+
     @media (max-width: 480px) {
       .container { padding: 1.5rem; }
     }
@@ -135,7 +129,7 @@
   <button class="toggle-mode" onclick="toggleTheme()">Toggle Mode</button>
   <div class="container">
     <div class="logo">
-      <img src="https://via.placeholder.com/120x40?text=KaioShop" alt="KaioShop Logo">
+      <img src="https://via.placeholder.com/120x40?text=KaioShop" alt="KaioShop Logo" />
     </div>
     <h2 id="formTitle">Welcome to KaioShop</h2>
     <form id="authForm">
@@ -176,7 +170,9 @@
       document.getElementById("submitBtn").textContent = isLogin ? "Login" : "Sign Up";
       document.getElementById("usernameGroup").style.display = isLogin ? "none" : "block";
       document.getElementById("rememberGroup").style.display = isLogin ? "flex" : "none";
-      document.querySelector(".toggle-link").textContent = isLogin ? "Don't have an account? Sign up" : "Already have an account? Login";
+      document.querySelector(".toggle-link").textContent = isLogin
+        ? "Don't have an account? Sign up"
+        : "Already have an account? Login";
       document.getElementById("message").textContent = "";
     }
 
@@ -193,39 +189,56 @@
       const value = this.value;
       const bar = document.getElementById("strengthBar");
       const strength = value.length < 4 ? "red" :
-                       value.length < 8 ? "orange" : "#00B894";
+                      value.length < 8 ? "orange" : "#00B894";
       bar.style.background = strength;
     });
 
     document.getElementById("authForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const username = document.getElementById("username").value;
       const msg = document.getElementById("message");
 
       try {
-        const endpoint = isLogin ? "/api/login" : "/api/signup";
-        const res = await fetch(`https://kaioshop2.onrender.com${endpoint}`, {
+        const url = isLogin
+          ? 'https://kaioshop2.onrender.com/api/login'
+          : 'https://kaioshop2.onrender.com/api/signup';
+
+        const payload = isLogin
+          ? { email, password }
+          : { email, password, username };
+
+        const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(isLogin ? { email, password } : { email, password, username })
+          body: JSON.stringify(payload)
         });
 
         const data = await res.json();
 
         if (res.ok) {
           msg.style.color = "#00B894";
-          msg.textContent = isLogin ? "Login successful! Redirecting..." : "Signup successful! You can now login.";
-          if (isLogin && document.getElementById("remember").checked) {
-            localStorage.setItem("rememberUser", email);
+          msg.textContent = isLogin
+            ? "Login successful! Redirecting..."
+            : "Signup successful! You can now login.";
+
+          if (isLogin) {
+            const token = data.token;
+            localStorage.setItem("jwt", token);
+            if (document.getElementById("remember").checked) {
+              localStorage.setItem("rememberUser", email);
+            }
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 1500);
+          } else {
+            toggleForm();
           }
-          if (isLogin) setTimeout(() => window.location.href = "home.html", 1500);
-          else toggleForm();
+
         } else {
           msg.style.color = "#FF7675";
-          msg.textContent = data.message || (isLogin ? "Login failed." : "Signup failed.");
+          msg.textContent = data.error || "Something went wrong.";
         }
       } catch (err) {
         msg.style.color = "#FF7675";
