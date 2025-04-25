@@ -1,59 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KaioShop - Dashboard</title>
+  <meta charset="UTF-8">
+  <title>KaioShop Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      margin: 0;
+      background: #1E1E2F;
+      color: #F5F6FA;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #1E1E2F, #6C5CE7);
-      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      margin: 0;
+      padding: 1rem;
     }
-    .card {
-      background: rgba(255, 255, 255, 0.1);
+    .dashboard {
+      background: rgba(255, 255, 255, 0.08);
       padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
       text-align: center;
     }
     h1 {
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      color: #00B894;
     }
-    .info {
+    .user-info {
       font-size: 1.1rem;
-      margin: 0.3rem 0;
-    }
-    button {
       margin-top: 1rem;
-      padding: 0.6rem 1.2rem;
-      background: #FF7675;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #e85d5d;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Welcome to KaioShop!</h1>
-    <p class="info" id="username">Username: </p>
-    <p class="info" id="email">Email: </p>
-    <button onclick="logout()">Logout</button>
+  <div class="dashboard">
+    <h1>Welcome to KaioShop Dashboard</h1>
+    <div class="user-info">
+      <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+    </div>
   </div>
 
   <script>
-    // Decode JWT
+    // Decode JWT from localStorage
     function parseJwt(token) {
       try {
         return JSON.parse(atob(token.split('.')[1]));
@@ -62,24 +53,14 @@
       }
     }
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = 'login.html';
-    } else {
-      const data = parseJwt(token);
-      if (data?.email && data?.username) {
-        document.getElementById('username').textContent = `Username: ${data.username}`;
-        document.getElementById('email').textContent = `Email: ${data.email}`;
-      } else {
-        alert("Invalid token");
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
-      }
-    }
+    const token = localStorage.getItem('kaioToken');
+    const userData = token ? parseJwt(token) : null;
 
-    function logout() {
-      localStorage.removeItem('token');
-      window.location.href = 'login.html';
+    if (userData) {
+      document.getElementById('username').textContent = userData.username;
+      document.getElementById('email').textContent = userData.email;
+    } else {
+      document.querySelector('.dashboard').innerHTML = '<p style="color: #FF7675;">You are not logged in. Please login again.</p>';
     }
   </script>
 </body>
