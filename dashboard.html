@@ -42,26 +42,25 @@
       <p><strong>Email:</strong> <span id="email">Loading...</span></p>
     </div>
   </div>
-
-  <script>
-    // Decode JWT from localStorage
-    function parseJwt(token) {
-      try {
-        return JSON.parse(atob(token.split('.')[1]));
-      } catch (e) {
-        return null;
-      }
+<script>
+  function parseJwt(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      return null;
     }
+  }
 
-    const token = localStorage.getItem('kaioToken');
-    const userData = token ? parseJwt(token) : null;
+  const token = localStorage.getItem('kaioToken');
+  const userData = token ? parseJwt(token) : null;
 
-    if (userData) {
-      document.getElementById('username').textContent = userData.username;
-      document.getElementById('email').textContent = userData.email;
-    } else {
-      document.querySelector('.dashboard').innerHTML = '<p style="color: #FF7675;">You are not logged in. Please login again.</p>';
-    }
-  </script>
+  if (userData) {
+    document.getElementById('username').textContent = userData.username;
+    document.getElementById('email').textContent = userData.email;
+  } else {
+    document.querySelector('.dashboard').innerHTML = '<p style="color: #FF7675;">You are not logged in. Please login again.</p>';
+  }
+</script>
+  
 </body>
 </html>
