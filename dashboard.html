@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>KaioShop Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       background: #1E1E2F;
@@ -42,25 +42,26 @@
       <p><strong>Email:</strong> <span id="email">Loading...</span></p>
     </div>
   </div>
-<script>
-  function parseJwt(token) {
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      return null;
+
+  <script>
+    function parseJwt(token) {
+      try {
+        return JSON.parse(atob(token.split('.')[1]));
+      } catch (e) {
+        return null;
+      }
     }
-  }
 
-  const token = localStorage.getItem('kaioToken');
-  const userData = token ? parseJwt(token) : null;
+    const token = localStorage.getItem("jwt");
+    const user = token ? parseJwt(token) : null;
 
-  if (userData) {
-    document.getElementById('username').textContent = userData.username;
-    document.getElementById('email').textContent = userData.email;
-  } else {
-    document.querySelector('.dashboard').innerHTML = '<p style="color: #FF7675;">You are not logged in. Please login again.</p>';
-  }
-</script>
-  
+    if (user) {
+      document.getElementById("username").textContent = user.username;
+      document.getElementById("email").textContent = user.email;
+    } else {
+      document.querySelector(".dashboard").innerHTML =
+        '<p style="color: #FF7675;">Not logged in. Please login again.</p>';
+    }
+  </script>
 </body>
 </html>
